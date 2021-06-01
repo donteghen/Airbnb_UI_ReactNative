@@ -1,26 +1,13 @@
 import React from 'react';
-import { StyleSheet, Text, View, Platform, StatusBar , TextInput, SafeAreaView, FlatList} from 'react-native';
+import { StyleSheet, Text, View, Platform, StatusBar , Image, TextInput, Dimensions,
+  SafeAreaView, FlatList, ScrollView, Animated} from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import Item from '../containers/Item';
-
-const DATA = [
-    {
-      id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28ba',
-      title: 'First Item',
-    },
-    {
-      id: '3ac68afc-c605-48d3-a4f8-fbd91aa97f63',
-      title: 'Second Item',
-    },
-    {
-      id: '58694a0f-3da1-471f-bd96-145571e29d72',
-      title: 'Third Item',
-    },
-    {
-        id: '511694a0f-3da1-471f-bd96-145571e29d72',
-        title: 'Third Item',
-      },
-  ];
+import Carousel from '../containers/Carousel';
+import {DATA, HOMES} from '../mock'
+import Tag from '../containers/Tag';
+const {width} = Dimensions.get('window');
+const screenWidth = Dimensions.get('screen').width
 
 export default function Explore() {
     const renderItem = ({item}) =>{
@@ -36,11 +23,32 @@ export default function Explore() {
                     <MaterialCommunityIcons name='map-search' size= {24}/>
                     <TextInput placeholder='Search...'  style={styles.search_text}/>
                 </View>
+                <Animated.View  style={{flexDirection:'row', position:'relative', top:5,
+                marginHorizontal:10, }}>
+                  <Tag name='Guests'/>
+                  <Tag name='Dates'/>
+                </Animated.View>
             </View>
-            <View style={styles.list_container}>
-                <View style={styles.heading}><Text style={styles.heading_text}>Want to explore new destinations or what? </Text></View>
-                <FlatList data={DATA} renderItem={renderItem} keyExtractor={item => item.id} horizontal={true}/>
-            </View>
+            <ScrollView showsVerticalScrollIndicator={false}>
+              <View style={styles.horizontal_list_container}>
+                  <View style={styles.heading}><Text style={styles.heading_text}>Want to explore new destinations or what? </Text></View>
+                  <FlatList data={DATA} renderItem={renderItem} showsHorizontalScrollIndicator={false}
+                  keyExtractor={item => item.id} horizontal={true}/>
+              </View>
+              <View style={styles.horizontal_list_container}>
+                  <View style={styles.heading}><Text style={styles.heading_text}>Introducing Airbnb Plus </Text></View>
+                  <View style={{width:width - 20, height:200}}>
+                    <Image source={require('../assets/home.jpeg')} style={styles.home_image}/>
+                  </View>
+              </View>
+              <View style={{marginTop:20, paddingHorizontal:10}}>
+                 <View><Text style={{fontWeight:'bold', fontSize:20, fontStyle:'italic', paddingHorizontal:10}}>Homes around the world</Text></View>
+                 <View style={{flexDirection:'row', flexWrap:'wrap', paddingHorizontal:10, justifyContent:'space-between'}}>
+                  {HOMES.map(home => <Carousel width={width} attr={home} key={home.id}/>)}
+                  {/* <Carousel width={width} attr={HOMES}/> */}
+                 </View>
+              </View>
+            </ScrollView>
         </View>
     </SafeAreaView>
   );
@@ -58,11 +66,12 @@ const styles = StyleSheet.create({
     
     borderBottomColor:'transparent',
     borderBottomWidth:2,
-    height: Platform.OS === 'android' ? StatusBar.currentHeight + 80 : 50,
-    elevation: 1,
+    height: Platform.OS === 'android' ? StatusBar.currentHeight + 120 : 80,
     shadowOffset:{width:0, height:0},
-    shadowOpacity:0.2
-    
+    shadowOpacity:0.3,
+    marginBottom:20,
+    paddingBottom:10,
+    elevation:2
   },
   search_content:{
       display:'flex',
@@ -84,14 +93,24 @@ const styles = StyleSheet.create({
       
   },
   heading_text:{
-    fontSize: 30,
+    fontSize: 20,
     fontWeight:'bold',
     fontStyle:'italic',
-    textAlign:'center'
+    padding:4
   },
-  list_container:{
-    
+  horizontal_list_container:{
     padding: 10,
-    
   },
+  home_image:{
+    flex:1, 
+    borderWidth:2,
+    borderRadius:2,
+    borderColor:'transparent',
+    width:'100%', 
+    height:'100%',
+    shadowOffset: {width:0, height:0},
+    shadowOpacity:0.3,
+    resizeMode:'cover',
+    
+  }
 });
